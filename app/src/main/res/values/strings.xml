@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Forth</string>
+    <string name="title_activity_welcome">Map</string>
+</resources>

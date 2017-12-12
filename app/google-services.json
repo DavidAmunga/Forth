@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1071940855800",
+    "firebase_url": "https://forth-b4e4b.firebaseio.com",
+    "project_id": "forth-b4e4b",
+    "storage_bucket": "forth-b4e4b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071940855800:android:64247e7ef98f92d7",
+        "android_client_info": {
+          "package_name": "com.labs.buttercell.forth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1071940855800-0iso9ruov5mvigt2tm8fg5sk57u4bbpf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.labs.buttercell.forth",
+            "certificate_hash": "ce92d7a69dc99a9796ec5571cc878ce02e1bffcd"
+          }
+        },
+        {
+          "client_id": "1071940855800-v2vkib91lcd2vt6umafptgo5k3821qhi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3yXp1mdwp4psKybVWezfXs_0OpNoRWMw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1071940855800-v2vkib91lcd2vt6umafptgo5k3821qhi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
