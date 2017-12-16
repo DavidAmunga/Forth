@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.labs.buttercell.forth.driver.DriverMainActivity;
 import com.labs.buttercell.forth.model.Rider;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -131,6 +132,14 @@ public class RiderMainActivity extends AppCompatActivity {
                                         startActivity(new Intent(RiderMainActivity.this, RiderMap.class));
                                         finish();
 
+                                    }
+                                    else
+                                    {
+                                        waitingDialog.dismiss();
+                                        Snackbar.make(rootLayout, "Sorry... user not found", Snackbar.LENGTH_SHORT)
+                                                .show();
+
+                                        finish();
                                     }
                                 }
                             }

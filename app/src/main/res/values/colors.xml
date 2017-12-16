@@ -13,4 +13,5 @@
     <color name="ballReleaseColor">#9E9E9E</color>
     <color name="colorForth">#FFC107</color>
     <color name="colorDivider">#1F000000</color>
+    <color name="colorBlack">#000</color>
 </resources>

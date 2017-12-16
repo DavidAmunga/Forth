@@ -1,4 +1,4 @@
-package com.labs.buttercell.forth;
+package com.labs.buttercell.forth.driver;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
@@ -48,6 +48,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.labs.buttercell.forth.R;
 import com.labs.buttercell.forth.common.Common;
 import com.labs.buttercell.forth.retrofit.IGoogleApi;
 

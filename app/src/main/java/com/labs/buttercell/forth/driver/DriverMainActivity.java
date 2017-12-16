@@ -1,4 +1,4 @@
-package com.labs.buttercell.forth;
+package com.labs.buttercell.forth.driver;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.labs.buttercell.forth.R;
+import com.labs.buttercell.forth.RiderMainActivity;
 import com.labs.buttercell.forth.model.Driver;
 import com.rengwuxian.materialedittext.MaterialEditText;
 

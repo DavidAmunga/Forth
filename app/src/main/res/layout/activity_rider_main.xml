@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/rootLayout"
     android:background="@drawable/bg"
-    tools:context="com.labs.buttercell.forth.DriverMainActivity">
+    tools:context="com.labs.buttercell.forth.driver.DriverMainActivity">
 
     <LinearLayout
         android:layout_width="wrap_content"
