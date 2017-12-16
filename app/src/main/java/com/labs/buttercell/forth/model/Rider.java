@@ -4,14 +4,14 @@ package com.labs.buttercell.forth.model;
  * Created by amush on 11-Dec-17.
  */
 
-public class User {
+public class Rider {
     private String email,password,name,phone;
 
-    public User(){
+    public Rider(){
 
     }
 
-    public User(String email, String password, String name, String phone) {
+    public Rider(String email, String password, String name, String phone) {
         this.email = email;
         this.password = password;
         this.name = name;

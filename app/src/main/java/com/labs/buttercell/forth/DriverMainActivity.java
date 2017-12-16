@@ -13,27 +13,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.labs.buttercell.forth.model.User;
+import com.google.firebase.database.ValueEventListener;
+import com.labs.buttercell.forth.model.Driver;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import dmax.dialog.SpotsDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity {
+public class DriverMainActivity extends AppCompatActivity {
 
     Button btnSignIn, btnRegister;
     RelativeLayout rootLayout;
+    private TextView txtRider;
 
     FirebaseAuth mAuth;
     DatabaseReference users;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -47,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Overlock-Regular.ttf")
                 .setFontAttrId(R.attr.fontPath).build());
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_driver_main);
 
 
 //        Init Views
@@ -89,30 +95,52 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                final String email = edtEmail.getText().toString().trim();
+                final String pass = edtPassword.getText().toString().trim();
 
 //                Set disable button Sign in if is processing
                 btnSignIn.setEnabled(false);
 
 
 //                Check validation
-                if (TextUtils.isEmpty(edtEmail.getText().toString())) {
+                if (TextUtils.isEmpty(email)) {
                     Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                if (edtPassword.getText().toString().length() < 6) {
+                if (pass.length() < 6) {
                     Snackbar.make(rootLayout, "Password too short", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
 
-                final SpotsDialog waitingDialog = new SpotsDialog(MainActivity.this);
+                final SpotsDialog waitingDialog = new SpotsDialog(DriverMainActivity.this);
                 waitingDialog.show();
+
 //                Sign in
-                mAuth.signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                mAuth.signInWithEmailAndPassword(email, pass).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        waitingDialog.dismiss();
-                        startActivity(new Intent(MainActivity.this, Welcome.class));
-                        finish();
+
+                        users.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for(DataSnapshot postSnapshot:dataSnapshot.getChildren())
+                                {
+                                    if(postSnapshot.child("email").getValue().equals(email) && postSnapshot.child("password").getValue().equals(pass))
+                                    {
+                                        waitingDialog.dismiss();
+                                        startActivity(new Intent(DriverMainActivity.this, DriverMap.class));
+                                        finish();
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
 
                     }
                 })
@@ -180,28 +208,27 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(rootLayout, "Password too short", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                final SpotsDialog waitingDialog = new SpotsDialog(MainActivity.this);
-                waitingDialog.setMessage("Signing up");
+                final SpotsDialog waitingDialog = new SpotsDialog(DriverMainActivity.this);
                 waitingDialog.show();
 //                Register now
                 mAuth.createUserWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
-//                                Save user to db
+//                                Save driver to db
 
-                                User user = new User();
-                                user.setEmail(edtEmail.getText().toString());
-                                user.setPassword(edtPassword.getText().toString());
-                                user.setPhone(edtPhone.getText().toString());
-                                user.setName(edtName.getText().toString());
+                                Driver driver = new Driver();
+                                driver.setEmail(edtEmail.getText().toString());
+                                driver.setPassword(edtPassword.getText().toString());
+                                driver.setPhone(edtPhone.getText().toString());
+                                driver.setName(edtName.getText().toString());
 
-//                                  Using User ID as key
-                                users.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                  Using Driver ID as key
+                                users.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(driver).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         waitingDialog.dismiss();
-                                        Snackbar.make(rootLayout, "Registered successfuly", Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(rootLayout, "Registered successfully", Snackbar.LENGTH_SHORT).show();
                                     }
                                 })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -237,9 +264,19 @@ public class MainActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
         btnSignIn = findViewById(R.id.btnSignIn);
 
-        mAuth = FirebaseAuth.getInstance();
-        users = FirebaseDatabase.getInstance().getReference("Users");
+        txtRider=findViewById(R.id.txt_rider_app2);
 
+        mAuth = FirebaseAuth.getInstance();
+        users = FirebaseDatabase.getInstance().getReference("Drivers");
         rootLayout = findViewById(R.id.rootLayout);
+
+
+
+        txtRider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DriverMainActivity.this,RiderMainActivity.class));
+            }
+        });
     }
 }

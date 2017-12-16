@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Forth</string>
     <string name="title_activity_welcome">Map</string>
+    <string name="google_directions_key">AIzaSyBB8oDID49jtnbEYr623FkMAEUB4rPuf2A</string>
+    <string name="title_activity_rider_mapp">RiderMapp</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

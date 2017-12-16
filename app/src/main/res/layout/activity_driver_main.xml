@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rootLayout"
+    android:background="@drawable/bg"
+    tools:context="com.labs.buttercell.forth.DriverMainActivity">
+
+   <LinearLayout
+       android:layout_width="wrap_content"
+       android:orientation="vertical"
+       android:layout_marginTop="30dp"
+       android:layout_centerHorizontal="true"
+       android:gravity="center_horizontal"
+       android:layout_height="wrap_content">
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Forth"
+           android:textSize="36dp"
+           android:textAlignment="center"
+           android:textColor="@color/colorWhite"
+           />
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Lets Drive"
+           android:textSize="26dp"
+           android:textAlignment="center"
+           android:textColor="@color/colorWhite"
+           />
+   </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/txt_rider_app"
+        android:layout_marginTop="20dp"
+        android:text="Looking for the Rider app?"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        />
+    <TextView
+        android:id="@+id/txt_rider_app2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txt_rider_app"
+        android:layout_alignBottom="@+id/txt_rider_app"
+        android:layout_toEndOf="@+id/txt_rider_app"
+        android:text="here"
+        android:layout_marginLeft="5dp"
+        android:textAlignment="center"
+        android:textColor="@color/colorForth"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="14dp"
+        android:layout_above="@id/txt_rider_app"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnSignIn"
+            android:textColor="@color/colorWhite"
+            android:text="SIGN IN"
+            android:background="@drawable/btn_sign_in_background"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+
+            />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnRegister"
+            android:textColor="@color/btnRegister"
+            android:text="REGISTER"
+            android:background="@drawable/btn_register_background"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="1"
+
+            />
+    </LinearLayout>
+</RelativeLayout>

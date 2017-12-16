@@ -11,4 +11,6 @@
     <color name="baseReleaseColor">#212121</color>
     <color name="basePressColor">#FAFAFA</color>
     <color name="ballReleaseColor">#9E9E9E</color>
+    <color name="colorForth">#FFC107</color>
+    <color name="colorDivider">#1F000000</color>
 </resources>
