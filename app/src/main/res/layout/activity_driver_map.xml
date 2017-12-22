@@ -43,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_panel"
+        android:layout_above="@id/card2"
 
         tools:context="com.labs.buttercell.forth.driver.DriverMap" />
 
@@ -50,7 +51,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        map:cardElevation="10dp">
+        map:cardElevation="10dp"
+        android:id="@+id/card2"
+
+        >
 
         <LinearLayout
             android:layout_width="match_parent"

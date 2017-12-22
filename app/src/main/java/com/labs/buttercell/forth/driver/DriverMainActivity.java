@@ -134,6 +134,15 @@ public class DriverMainActivity extends AppCompatActivity {
                                         finish();
 
                                     }
+                                    else
+                                    {
+                                        waitingDialog.dismiss();
+                                        Snackbar.make(rootLayout, "Sorry, driver does not exist", Snackbar.LENGTH_SHORT)
+                                                .show();
+
+                                        btnSignIn.setEnabled(true);
+
+                                    }
                                 }
                             }
 

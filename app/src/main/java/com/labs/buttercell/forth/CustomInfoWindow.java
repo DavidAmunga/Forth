@@ -16,17 +16,17 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
     View mView;
 
     public CustomInfoWindow(Context context) {
-       mView= LayoutInflater.from(context)
-               .inflate(R.layout.custom_rider_info,null);
+        mView = LayoutInflater.from(context)
+                .inflate(R.layout.custom_rider_info, null);
     }
 
     @Override
     public View getInfoWindow(Marker marker) {
-        TextView txtPickupTitle=mView.findViewById(R.id.txtPickupInfo);
+        TextView txtPickupTitle = mView.findViewById(R.id.txtPickupInfo);
         txtPickupTitle.setText(marker.getTitle());
 
 
-        TextView txtPickupSnippet=mView.findViewById(R.id.txtPickupSnippet);
+        TextView txtPickupSnippet = mView.findViewById(R.id.txtPickupSnippet);
         txtPickupSnippet.setText(marker.getSnippet());
 
         return mView;

@@ -225,7 +225,7 @@ public class DriverMap extends FragmentActivity implements OnMapReadyCallback,
 
 
 //        Geo Fire
-        drivers = FirebaseDatabase.getInstance().getReference("Drivers");
+        drivers = FirebaseDatabase.getInstance().getReference("DriversAvailable");
         geoFire = new GeoFire(drivers);
 
         setupLocation();
