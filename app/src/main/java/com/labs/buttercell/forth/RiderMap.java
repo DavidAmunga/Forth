@@ -1,6 +1,5 @@
 package com.labs.buttercell.forth;
 
-import android.*;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -45,10 +44,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
+import com.labs.buttercell.forth.common.Common;
 import com.labs.buttercell.forth.fragment.BottomSheetRiderFragment;
 import com.labs.buttercell.forth.model.Driver;
-import com.labs.buttercell.forth.model.Rider;
+import com.labs.buttercell.forth.model.FCMResponse;
+import com.labs.buttercell.forth.model.Notification;
+import com.labs.buttercell.forth.model.Sender;
+import com.labs.buttercell.forth.model.Token;
+import com.labs.buttercell.forth.retrofit.FCMService;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -95,6 +104,10 @@ public class RiderMap extends AppCompatActivity
     int radius = 1; //1 Km
     int distance = 1; //1 Km
 
+
+    //    Send Alert
+    FCMService mService;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -111,6 +124,8 @@ public class RiderMap extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Home");
 
+
+        mService = Common.getFCMService();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -144,11 +159,74 @@ public class RiderMap extends AppCompatActivity
         btnPickupRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestPickupHere(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                if (!isDriverFound) {
+                    requestPickupHere(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                } else {
+                    sendRequestToDriver(driverId);
+                }
+
             }
         });
 
         setupLocation();
+
+        updateFirebaseToken();
+    }
+
+    private void updateFirebaseToken() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+
+        Token token = new Token(FirebaseInstanceId.getInstance().getToken());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) //If already login then update token
+        {
+            ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(token);
+
+        }
+    }
+
+    private void sendRequestToDriver(String driverId) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+
+
+        ref.orderByKey().equalTo(driverId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Token token = postSnapshot.getValue(Token.class); //Get Token object from Database with key
+
+//                          Make Raw payload - Convert LatLng to JSON
+                            String json_lat_lng = new Gson().toJson(new LatLng(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()));
+
+                            Notification data = new Notification("Forther", json_lat_lng); //Send it to Driver then we deserialize it
+                            Sender content = new Sender(token.getToken(), data); //Send the same data to the token
+
+
+                            mService.sendMessage(content)
+                                    .enqueue(new Callback<FCMResponse>() {
+                                        @Override
+                                        public void onResponse(Call<FCMResponse> call, Response<FCMResponse> response) {
+                                            if (response.body().success == 1) {
+                                                Toast.makeText(RiderMap.this, "Request sent!", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(RiderMap.this, "Failed !", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<FCMResponse> call, Throwable t) {
+                                            Log.d(TAG, "onFailure: " + t.getLocalizedMessage());
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void requestPickupHere(String uid) {
@@ -157,7 +235,7 @@ public class RiderMap extends AppCompatActivity
         GeoFire mGeoFire = new GeoFire(dbRequest);
 
 //                Update to Firebase
-        mGeoFire.setLocation(uid, new GeoLocation(mLastLocation.getLatitude(), mLastLocation
+        mGeoFire.setLocation(uid, new GeoLocation(Common.mLastLocation.getLatitude(), Common.mLastLocation
                 .getLongitude()));
 
         if (mUserMarker.isVisible()) {
@@ -165,13 +243,13 @@ public class RiderMap extends AppCompatActivity
 
 //            Add Marker
             mUserMarker = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
+                    .position(new LatLng(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                     .title("Pickup here")
                     .snippet(""));
 
             mUserMarker.showInfoWindow();
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()), 15.0f));
 
             btnPickupRequest.setText("Getting your driver...");
 
@@ -183,10 +261,10 @@ public class RiderMap extends AppCompatActivity
     }
 
     private void findDriver() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Drivers");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("DriversAvailable");
         GeoFire gfDrivers = new GeoFire(ref);
 
-        GeoQuery geoQuery = gfDrivers.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), radius);
+        GeoQuery geoQuery = gfDrivers.queryAtLocation(new GeoLocation(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()), radius);
         geoQuery.removeAllListeners();
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -303,11 +381,11 @@ public class RiderMap extends AppCompatActivity
 
             return;
         }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
+        Common.mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (Common.mLastLocation != null) {
 
-            final double latitude = mLastLocation.getLatitude();
-            final double longitude = mLastLocation.getLongitude();
+            final double latitude = Common.mLastLocation.getLatitude();
+            final double longitude = Common.mLastLocation.getLongitude();
 
             if (mUserMarker == null) {
                 Log.d(TAG, "onComplete: Not null");
@@ -329,7 +407,7 @@ public class RiderMap extends AppCompatActivity
         DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
         GeoFire gf = new GeoFire(driverLocation);
 
-        GeoQuery geoQuery = gf.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), distance);
+        GeoQuery geoQuery = gf.queryAtLocation(new GeoLocation(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()), distance);
         geoQuery.removeAllListeners();
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -469,7 +547,7 @@ public class RiderMap extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
+        Common.mLastLocation = location;
         display_location();
     }
 

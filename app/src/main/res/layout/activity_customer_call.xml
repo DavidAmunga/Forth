@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBlack"
+    tools:context="com.labs.buttercell.forth.CustomerCall">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/map_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/map"
+        app:civ_border_color="@android:color/holo_orange_dark"
+        app:civ_border_width="5dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/map_image"
+        android:orientation="vertical"
+        android:layout_marginTop="14dp"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtTime"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtDistance"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtAddress"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+        
+    </LinearLayout>
+
+
+</RelativeLayout>

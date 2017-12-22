@@ -25,6 +25,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.firebase:firebase-database:11.0.4'
     implementation 'com.google.firebase:firebase-auth:11.0.4'
+    implementation 'com.google.firebase:firebase-messaging:11.0.4'
     implementation 'com.google.android.gms:play-services-maps:11.0.4'
     implementation 'com.google.android.gms:play-services-location:11.0.4'
     implementation 'com.google.android.gms:play-services-places:11.0.4'
@@ -36,13 +37,16 @@ dependencies {
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
     implementation 'com.github.d-max:spots-dialog:0.7@aar'
     implementation 'com.firebase:geofire-android:2.1.2'
     implementation 'com.github.glomadrian:MaterialAnimatedSwitch:1.1@aar'
-
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.google.code.gson:gson:2.2.4'
 }
+
 
 
 
