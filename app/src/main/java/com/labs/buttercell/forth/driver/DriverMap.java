@@ -45,9 +45,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.labs.buttercell.forth.R;
 import com.labs.buttercell.forth.common.Common;
@@ -111,6 +113,8 @@ public class DriverMap extends FragmentActivity implements OnMapReadyCallback,
     private IGoogleApi mService;
 
 
+    //    Prescence System
+    DatabaseReference onlineRef, currentUserRef;
 
 
     Runnable drawPathRunnable = new Runnable() {
@@ -179,17 +183,41 @@ public class DriverMap extends FragmentActivity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+//        Prescense System
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
+        currentUserRef = FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId);
+
+        onlineRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Remove on connected
+                currentUserRef.onDisconnect().removeValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 //        InitView
         locationSwitch = findViewById(R.id.location_switch);
         locationSwitch.setOnCheckedChangeListener(new MaterialAnimatedSwitch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(boolean isOnline) {
                 if (isOnline) {
+
+                    FirebaseDatabase.getInstance().goOnline();
                     startLocationUpdates();
                     display_location();
                     Snackbar.make(mapFragment.getView(), "You are online", Snackbar.LENGTH_SHORT).show();
 
                 } else {
+                    FirebaseDatabase.getInstance().goOffline();
+
                     stopLocationUpdates();
                     if (mCurrent != null) {
                         mCurrent.remove();

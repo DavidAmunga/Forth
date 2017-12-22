@@ -172,6 +172,8 @@ public class RiderMap extends AppCompatActivity
         setupLocation();
 
         updateFirebaseToken();
+
+
     }
 
     private void updateFirebaseToken() {
@@ -383,6 +385,21 @@ public class RiderMap extends AppCompatActivity
         }
         Common.mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (Common.mLastLocation != null) {
+//Prescence System
+            DatabaseReference driversAvailable = FirebaseDatabase.getInstance().getReference("DriversAvailable");
+            driversAvailable.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+//                If have any change then load all drivers available
+                    loadAvailableDrivers();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
 
             final double latitude = Common.mLastLocation.getLatitude();
             final double longitude = Common.mLastLocation.getLongitude();
@@ -399,10 +416,20 @@ public class RiderMap extends AppCompatActivity
 
                 loadAvailableDrivers();
             }
+
+
         }
     }
 
     private void loadAvailableDrivers() {
+//        Delete all markers first
+        mMap.clear();
+
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()))
+                .title("You"));
+
+
 //        Load all available drivers within
         DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
         GeoFire gf = new GeoFire(driverLocation);
