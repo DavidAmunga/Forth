@@ -7,8 +7,11 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +26,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.labs.buttercell.forth.common.Common;
 import com.labs.buttercell.forth.driver.DriverMap;
+import com.labs.buttercell.forth.model.FCMResponse;
+import com.labs.buttercell.forth.model.Notification;
+import com.labs.buttercell.forth.model.Sender;
+import com.labs.buttercell.forth.model.Token;
 import com.labs.buttercell.forth.retrofit.FCMService;
 import com.labs.buttercell.forth.retrofit.IGoogleApi;
 
@@ -44,9 +51,16 @@ public class CustomerCall extends AppCompatActivity {
 
     TextView txtTime, txtAddress, txtDistance;
 
+    Button btnAccept, btnDecline;
+
     MediaPlayer mediaPlayer;
 
     IGoogleApi mService;
+
+    FCMService mFCMService;
+
+
+    String customerId;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -65,9 +79,9 @@ public class CustomerCall extends AppCompatActivity {
         setContentView(R.layout.activity_customer_call);
 
 
-
-
         mService = Common.getGoogeApi();
+
+        mFCMService = Common.getFCMService();
 
         initViews();
 
@@ -75,6 +89,7 @@ public class CustomerCall extends AppCompatActivity {
         if (getIntent() != null) {
             double lat = getIntent().getDoubleExtra("lat", -1.0);
             double lng = getIntent().getDoubleExtra("lng", -1.0);
+            customerId = getIntent().getStringExtra("customer");
 
             getDirection(lat, lng);
 
@@ -84,12 +99,62 @@ public class CustomerCall extends AppCompatActivity {
             mediaPlayer.start();
         }
 
+        btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnDecline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(customerId)) {
+                    Log.d(TAG, "onClick: Empty");
+                    cancelBooking(customerId);
+                }
+            }
+        });
+
+    }
+
+    private void cancelBooking(String customerId) {
+        Token token = new Token(customerId);
+
+        Notification notification = new Notification("Notice!", "Driver has cancelled your request");
+        Sender sender = new Sender(token.getToken(), notification);
+
+        mFCMService.sendMessage(sender)
+                .enqueue(new Callback<FCMResponse>() {
+                    @Override
+                    public void onResponse(Call<FCMResponse> call, Response<FCMResponse> response) {
+                        if (response.body().success == 1) {
+                            Toast.makeText(CustomerCall.this, "Cancelled!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+
+                            Toast.makeText(CustomerCall.this, "Failed!", Toast.LENGTH_LONG).show();
+
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<FCMResponse> call, Throwable t) {
+
+
+                    }
+                });
     }
 
     private void initViews() {
         txtAddress = findViewById(R.id.txtAddress);
         txtDistance = findViewById(R.id.txtDistance);
         txtTime = findViewById(R.id.txtTime);
+        btnAccept = findViewById(R.id.btnAccept);
+        btnDecline = findViewById(R.id.btnDecline);
 
     }
 
@@ -120,15 +185,15 @@ public class CustomerCall extends AppCompatActivity {
                                 JSONObject legsObject = legs.getJSONObject(0);
 
 //                                Get Distancec
-                                JSONObject distance=legsObject.getJSONObject("distance");
+                                JSONObject distance = legsObject.getJSONObject("distance");
                                 txtDistance.setText(distance.getString("text"));
 
 //                                Get Time
-                                JSONObject time=legsObject.getJSONObject("duration");
+                                JSONObject time = legsObject.getJSONObject("duration");
                                 txtTime.setText(time.getString("text"));
 
 //                                Get Address
-                                String address=legsObject.getString("end_address");
+                                String address = legsObject.getString("end_address");
                                 txtAddress.setText(address);
 
                             } catch (JSONException e) {
@@ -164,36 +229,6 @@ public class CustomerCall extends AppCompatActivity {
     protected void onResume() {
         mediaPlayer.start();
         super.onResume();
-    }
-
-    public static List<LatLng> decodePoly(String encoded) {
-        ArrayList<LatLng> poly = new ArrayList<>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            LatLng position = new LatLng((double) lat / 1E5,
-                    (double) lng / 1E5);
-            poly.add(position);
-        }
-        return poly;
     }
 
 

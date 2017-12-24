@@ -12,7 +12,8 @@
         android:id="@+id/map_image"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/map"
         app:civ_border_color="@android:color/holo_orange_dark"
         app:civ_border_width="5dp" />
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/map_image"
         android:orientation="vertical"
+        android:id="@+id/linearLayout"
         android:layout_marginTop="14dp"
         >
         <TextView
@@ -53,6 +55,42 @@
             android:textSize="20sp"
             />
         
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="14dp"
+        android:layout_below="@id/linearLayout"
+        android:layout_height="wrap_content"
+        android:id="@+id/otherLayout">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAccept"
+            android:textColor="@color/colorWhite"
+            android:text="Accept"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_sign_in_background"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+
+            />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnDecline"
+            android:textColor="@color/btnRegister"
+            android:text="Decline"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_register_background"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="1"
+
+            />
     </LinearLayout>
 
 

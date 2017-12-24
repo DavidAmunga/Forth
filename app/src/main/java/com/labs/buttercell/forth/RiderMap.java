@@ -201,7 +201,8 @@ public class RiderMap extends AppCompatActivity
 //                          Make Raw payload - Convert LatLng to JSON
                             String json_lat_lng = new Gson().toJson(new LatLng(Common.mLastLocation.getLatitude(), Common.mLastLocation.getLongitude()));
 
-                            Notification data = new Notification("Forther", json_lat_lng); //Send it to Driver then we deserialize it
+                            String riderToken=FirebaseInstanceId.getInstance().getToken();
+                            Notification data = new Notification(riderToken, json_lat_lng); //Send it to Driver then we deserialize it
                             Sender content = new Sender(token.getToken(), data); //Send the same data to the token
 
 
